@@ -1,0 +1,257 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Core palette - Cream white / Navy accent */
+    --background: 50 11% 97%;
+    --foreground: 0 0% 18%;
+    --card: 50 11% 97%;
+    --card-foreground: 0 0% 18%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 18%;
+    --primary: 216 54% 23%;
+    --primary-foreground: 50 11% 97%;
+    --secondary: 50 6% 93%;
+    --secondary-foreground: 0 0% 18%;
+    --muted: 50 6% 93%;
+    --muted-foreground: 0 0% 54%;
+    --accent: 50 6% 93%;
+    --accent-foreground: 216 54% 23%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 50 4% 89%;
+    --input: 50 4% 89%;
+    --ring: 216 54% 23%;
+    --radius: 0.5rem;
+
+    /* Custom design tokens */
+    --nav-height: 64px;
+    --content-max-width: 720px;
+    --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    --shadow-subtle: 0 1px 3px hsl(0 0% 0% / 0.04);
+    --shadow-card: 0 4px 20px hsl(0 0% 0% / 0.06);
+    --shadow-card-hover: 0 8px 30px hsl(0 0% 0% / 0.1);
+    --shadow-elevated: 0 12px 40px hsl(0 0% 0% / 0.12);
+  }
+
+  .dark {
+    --background: 0 0% 10%;
+    --foreground: 50 4% 91%;
+    --card: 0 0% 13%;
+    --card-foreground: 50 4% 91%;
+    --popover: 0 0% 13%;
+    --popover-foreground: 50 4% 91%;
+    --primary: 212 43% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 50 4% 91%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 0 0% 15%;
+    --accent-foreground: 212 43% 60%;
+    --destructive: 0 62% 31%;
+    --destructive-foreground: 50 4% 91%;
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 212 43% 50%;
+
+    --shadow-subtle: 0 1px 3px hsl(0 0% 0% / 0.2);
+    --shadow-card: 0 4px 20px hsl(0 0% 0% / 0.3);
+    --shadow-card-hover: 0 8px 30px hsl(0 0% 0% / 0.4);
+    --shadow-elevated: 0 12px 40px hsl(0 0% 0% / 0.5);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    transition: background-color var(--transition-smooth), color var(--transition-smooth);
+  }
+
+  /* Selection color */
+  ::selection {
+    background: hsl(var(--primary) / 0.15);
+    color: hsl(var(--foreground));
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.5);
+  }
+}
+
+@layer components {
+  /* Underline hover animation for links */
+  .link-underline {
+    position: relative;
+    text-decoration: none;
+  }
+  .link-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: hsl(var(--primary));
+    transition: width var(--transition-base);
+  }
+  .link-underline:hover::after {
+    width: 100%;
+  }
+  .link-underline.active::after {
+    width: 100%;
+  }
+
+  /* Ripple effect for hover and click */
+  .ripple {
+    position: relative;
+    overflow: hidden;
+  }
+  .ripple::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle, hsl(var(--primary) / 0.15) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    transition: width 0.5s ease, height 0.5s ease, opacity 0.5s ease;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .ripple:hover::before {
+    width: 200%;
+    height: 200%;
+    opacity: 1;
+  }
+  .ripple:active::before {
+    width: 250%;
+    height: 250%;
+    opacity: 0.8;
+    transition: width 0.2s ease, height 0.2s ease;
+  }
+
+  /* Staggered fade-in animation */
+  .stagger-item {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  .stagger-item.visible {
+    animation: stagger-fade-in 0.5s ease-out forwards;
+  }
+
+  /* Reading progress bar */
+  .reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: hsl(var(--primary));
+    z-index: 100;
+    transition: width 0.1s linear;
+  }
+
+  /* Code block styling */
+  .code-block {
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    transition: border-color var(--transition-base), box-shadow var(--transition-base);
+  }
+  .code-block:hover {
+    animation: breathe-border 3s ease-in-out infinite;
+  }
+
+  /* Page transition wrapper */
+  .page-enter {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  .page-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity var(--transition-smooth), transform var(--transition-smooth);
+  }
+  .page-exit {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .page-exit-active {
+    opacity: 0;
+    transform: translateY(-12px);
+    transition: opacity 0.3s ease-in, transform 0.3s ease-in;
+  }
+}
+
+@layer utilities {
+  /* Theme transition utility */
+  .theme-transition {
+    transition: background-color var(--transition-smooth),
+                color var(--transition-smooth),
+                border-color var(--transition-smooth),
+                box-shadow var(--transition-smooth);
+  }
+}
+
+@keyframes stagger-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes breathe-border {
+  0%, 100% {
+    border-color: hsl(var(--primary) / 0.2);
+    box-shadow: 0 0 0 0 hsl(var(--primary) / 0);
+  }
+  50% {
+    border-color: hsl(var(--primary) / 0.5);
+    box-shadow: 0 0 12px 0 hsl(var(--primary) / 0.08);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out;
+}
