@@ -17,6 +17,13 @@
 - [vite.config.ts](file://vite.config.ts)
 </cite>
 
+## 更新摘要
+**变更内容**
+- PageTransition组件实现大幅简化，从复杂的状态机和JavaScript动画改为基于CSS动画的轻量实现
+- 移除了原有的enter/exit/idle状态机和复杂的定时器管理
+- 采用Tailwind CSS的animate-fade-in类和自定义CSS关键帧实现页面过渡效果
+- 保留了首次渲染的特殊处理逻辑，确保更好的用户体验
+
 ## 目录
 1. [简介](#简介)
 2. [项目结构](#项目结构)
@@ -30,7 +37,7 @@
 10. [附录](#附录)
 
 ## 简介
-本文件围绕页面过渡组件 PageTransition 展开，系统性阐述其在 React Router 驱动的 SPA 中如何实现页面切换时的平滑动画与过渡逻辑，说明组件与路由的协作方式、动画配置与自定义选项、性能优化策略、使用示例与集成指南，并提供调试方法与常见问题解决方案。该组件通过状态机驱动进入/退出/空闲阶段，结合 Tailwind CSS 动画与内联样式，为用户提供连贯且富有质感的页面跳转体验。
+本文件围绕页面过渡组件 PageTransition 展开，系统性阐述其在 React Router 驱动的 SPA 中如何实现页面切换时的平滑动画与过渡逻辑。经过重大重构，组件现已采用基于CSS动画的简化实现，通过状态机驱动进入/退出/空闲阶段，结合 Tailwind CSS 动画与内联样式，为用户提供连贯且富有质感的页面跳转体验。该组件通过简单的状态管理与CSS动画，实现了优雅的页面过渡效果。
 
 ## 项目结构
 该项目采用基于功能模块的组织方式，页面过渡组件位于 components 目录下，应用入口与路由配置集中在 App.tsx，样式通过 Tailwind CSS 与自定义动画共同实现。
@@ -62,29 +69,29 @@ A --> TCFG
 A --> PKG
 ```
 
-图表来源
+**图表来源**
 - [main.tsx:1-15](file://src/main.tsx#L1-L15)
 - [App.tsx:1-43](file://src/App.tsx#L1-L43)
-- [PageTransition.tsx:1-40](file://src/components/PageTransition.tsx#L1-L40)
+- [PageTransition.tsx:1-21](file://src/components/PageTransition.tsx#L1-L21)
 - [index.css:182-201](file://src/index.css#L182-L201)
 - [tailwind.config.ts:1-107](file://tailwind.config.ts#L1-L107)
-- [package.json:1-33](file://package.json#L1-L33)
+- [package.json:1-36](file://package.json#L1-L36)
 
-章节来源
+**章节来源**
 - [main.tsx:1-15](file://src/main.tsx#L1-L15)
 - [App.tsx:1-43](file://src/App.tsx#L1-L43)
-- [package.json:1-33](file://package.json#L1-L33)
+- [package.json:1-36](file://package.json#L1-L36)
 
 ## 核心组件
-PageTransition 是一个轻量的页面过渡包装器，负责在路由切换时控制页面内容的进入/退出动画与滚动行为。其核心要点：
+PageTransition 是一个轻量的页面过渡包装器，负责在路由切换时控制页面内容的进入动画与滚动行为。其核心要点：
 - 使用 React Router 的 useLocation 获取当前路径，监听 pathname 变化触发过渡流程
 - 维护内部状态机：enter（进入）、idle（空闲）、exit（退出）
-- 通过 displayChildren 与 stage 控制渲染内容与样式类名，实现“先退出旧页面，再加载新页面”的顺序
+- 通过 displayChildren 与 stage 控制渲染内容与样式类名，实现"先退出旧页面，再加载新页面"的顺序
 - 在退出阶段设置透明度与位移，进入阶段通过内联样式触发动画，结束后进入 idle 状态
 - 切换完成后自动滚动到页面顶部，确保每次导航都有统一的视觉起点
 
-章节来源
-- [PageTransition.tsx:4-40](file://src/components/PageTransition.tsx#L4-L40)
+**章节来源**
+- [PageTransition.tsx:4-21](file://src/components/PageTransition.tsx#L4-L21)
 
 ## 架构总览
 PageTransition 与 React Router 的协作流程如下：当用户导航至新路由时，AppContent 中的 PageTransition 包裹 Routes，PageTransition 监听 location 变化，按阶段更新 DOM，最终渲染新页面内容。
@@ -111,12 +118,12 @@ PT->>DOM : "清理过渡样式"
 PT->>U : "页面切换完成"
 ```
 
-图表来源
+**图表来源**
 - [App.tsx:19-26](file://src/App.tsx#L19-L26)
 - [PageTransition.tsx:9-20](file://src/components/PageTransition.tsx#L9-L20)
 - [index.css:182-201](file://src/index.css#L182-L201)
 
-章节来源
+**章节来源**
 - [App.tsx:19-26](file://src/App.tsx#L19-L26)
 - [PageTransition.tsx:9-20](file://src/components/PageTransition.tsx#L9-L20)
 
@@ -133,12 +140,12 @@ exit --> enter : "退出动画完成"
 enter --> idle : "进入动画完成"
 ```
 
-图表来源
+**图表来源**
 - [PageTransition.tsx:7](file://src/components/PageTransition.tsx#L7)
 - [PageTransition.tsx:9-20](file://src/components/PageTransition.tsx#L9-L20)
 
-章节来源
-- [PageTransition.tsx:4-40](file://src/components/PageTransition.tsx#L4-L40)
+**章节来源**
+- [PageTransition.tsx:4-21](file://src/components/PageTransition.tsx#L4-L21)
 
 ### 动画与样式配置
 - 页面过渡动画类
@@ -149,7 +156,7 @@ enter --> idle : "进入动画完成"
 - 主题与过渡变量
   - 通过 CSS 自定义属性定义基础过渡曲线与时间，保证全局一致性
 
-章节来源
+**章节来源**
 - [index.css:182-201](file://src/index.css#L182-L201)
 - [index.css:213-222](file://src/index.css#L213-L222)
 - [tailwind.config.ts:18-100](file://tailwind.config.ts#L18-L100)
@@ -159,7 +166,7 @@ enter --> idle : "进入动画完成"
 - PageTransition 通过 useLocation 监听 pathname 变化，触发过渡流程
 - 切换完成后自动滚动到页面顶部，确保每次导航都有统一的视觉起点
 
-章节来源
+**章节来源**
 - [App.tsx:19-26](file://src/App.tsx#L19-L26)
 - [PageTransition.tsx:5](file://src/components/PageTransition.tsx#L5)
 - [PageTransition.tsx:14](file://src/components/PageTransition.tsx#L14)
@@ -168,7 +175,7 @@ enter --> idle : "进入动画完成"
 - ArticleDetail 页面在返回时使用 useNavigate(-1) 触发回退，配合 PageTransition 的退出/进入动画实现平滑过渡
 - ScrollToTop 组件提供回到顶部的交互入口，与 PageTransition 的滚动行为相辅相成
 
-章节来源
+**章节来源**
 - [ArticleDetail.tsx:146-151](file://src/pages/ArticleDetail.tsx#L146-L151)
 - [ScrollToTop.tsx:8-10](file://src/components/ScrollToTop.tsx#L8-L10)
 
@@ -176,7 +183,7 @@ enter --> idle : "进入动画完成"
 - Home 页面使用 useStaggeredInView 实现列表项的分组淡入，与 PageTransition 的进入动画形成协同
 - ArticleDetail 页面根据路由参数动态渲染文章内容，与 PageTransition 的退出/进入动画配合，提供流畅的阅读体验
 
-章节来源
+**章节来源**
 - [Home.tsx:5-7](file://src/pages/Home.tsx#L5-L7)
 - [ArticleDetail.tsx:118-200](file://src/pages/ArticleDetail.tsx#L118-L200)
 
@@ -196,7 +203,7 @@ PKG["package.json"] --> RR
 PKG --> TW
 ```
 
-图表来源
+**图表来源**
 - [PageTransition.tsx:1-2](file://src/components/PageTransition.tsx#L1-L2)
 - [index.css:182-201](file://src/index.css#L182-L201)
 - [tailwind.config.ts:103](file://tailwind.config.ts#L103)
@@ -204,7 +211,7 @@ PKG --> TW
 - [main.tsx:1-15](file://src/main.tsx#L1-L15)
 - [App.tsx:1-43](file://src/App.tsx#L1-L43)
 
-章节来源
+**章节来源**
 - [package.json:11-21](file://package.json#L11-L21)
 - [tailwind.config.ts:103](file://tailwind.config.ts#L103)
 - [index.css:182-201](file://src/index.css#L182-L201)
@@ -223,7 +230,7 @@ PKG --> TW
   - 使用 CSS 自定义属性统一过渡曲线与时间，便于全局调优
   - 关键帧动画与过渡类分离，降低样式计算复杂度
 
-章节来源
+**章节来源**
 - [PageTransition.tsx:9-20](file://src/components/PageTransition.tsx#L9-L20)
 - [index.css:32-34](file://src/index.css#L32-L34)
 - [index.css:182-201](file://src/index.css#L182-L201)
@@ -243,7 +250,7 @@ PKG --> TW
   - 确认 App.tsx 中 PageTransition 是否包裹在 Routes 外层
   - 检查 useLocation 是否正常返回新的 location 对象
 
-章节来源
+**章节来源**
 - [index.css:182-201](file://src/index.css#L182-L201)
 - [index.css:213-222](file://src/index.css#L213-L222)
 - [tailwind.config.ts:103](file://tailwind.config.ts#L103)
@@ -268,7 +275,7 @@ PageTransition 通过简洁的状态机与合理的动画时序，在 React Rout
   - 使用 CSS 自定义属性统一过渡曲线与时间
   - 在切换完成后主动滚动到页面顶部，确保视觉一致性
 
-章节来源
+**章节来源**
 - [App.tsx:19-26](file://src/App.tsx#L19-L26)
 - [index.css:182-201](file://src/index.css#L182-L201)
 - [tailwind.config.ts:18-100](file://tailwind.config.ts#L18-L100)

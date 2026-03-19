@@ -29,7 +29,7 @@ export function About() {
         <div className="flex flex-col gap-8 sm:flex-row sm:items-start">
           <div className="h-24 w-24 shrink-0 overflow-hidden rounded-full bg-secondary">
             <img
-              src="/avatar.jpg"
+              src="avatar.jpg"
               alt="头像"
               className="h-full w-full object-cover"
               loading="lazy"

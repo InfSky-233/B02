@@ -3,11 +3,10 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "homepage": "https://你的用户名.github.io/B02",
+  "homepage": "https://InfSky-233.github.io/B02",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },
@@ -23,11 +22,12 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@types/node": "^25.5.0",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
-    "gh-pages": "^6.1.1",
+    "gh-pages": "^6.3.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
     "typescript": "~5.6.2",
